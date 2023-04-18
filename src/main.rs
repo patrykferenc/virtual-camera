@@ -1,8 +1,30 @@
+mod scene;
+
+use scene::polygon::Polygon;
+use scene::vertex::Vertex;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 
 pub fn main() -> Result<(), String> {
+    let mut scene = scene::scene::Scene::new();
+
+    // TODO: read scene from file
+    let v1 = Vertex::new(0.0, 1.0, 0.0);
+    let v2 = Vertex::new(-1.0, 0.0, -1.0);
+    let v3 = Vertex::new(1.0, 0.0, -1.0);
+    let v4 = Vertex::new(1.0, 0.0, 1.0);
+    let v5 = Vertex::new(-1.0, 0.0, 1.0);
+
+    let polygons = vec![
+        Polygon::new(v1, v2, v3),
+        Polygon::new(v1, v3, v4),
+        Polygon::new(v1, v4, v5),
+        Polygon::new(v1, v5, v2),
+        Polygon::new(v5, v4, v3),
+        Polygon::new(v5, v3, v2),
+    ];
+
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
 
@@ -51,8 +73,8 @@ pub fn main() -> Result<(), String> {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
-        canvas.set_draw_color(Color::RGB(0, 255, 255));
-        canvas.draw_point((100, 100)).map_err(|e| e.to_string())?;
+        // canvas.set_draw_color(Color::RGB(0, 255, 255));
+        // canvas.draw_point((100, 100)).map_err(|e| e.to_string())?;
         canvas.present();
     }
 
