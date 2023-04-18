@@ -42,7 +42,7 @@ impl Camera {
             ),
             rotation_matrix_y: Matrix4::from_axis_angle(
                 vec3(0.0, 1.0, 0.0),
-                cgmath::Deg(startig_rotation_y),
+                cgmath::Deg(-startig_rotation_y),
             ),
             rotation_x: startig_rotation_x,
             rotation_y: startig_rotation_y,
@@ -54,7 +54,7 @@ impl Camera {
         let vertex_in_quadrilateral = self.convert_vertex_to_quadrilateral(vertex);
         let point_rotated_around_y = self.rotation_matrix_y.mul(vertex_in_quadrilateral);
         let projected_point = self.projection_matrix.mul(
-            self.projection_matrix
+            self.rotation_matrix_x
                 .mul(point_rotated_around_y + rotated_global_state_vector),
         );
 
@@ -64,7 +64,7 @@ impl Camera {
             + self.viewport_width / 2.0;
         let projected_y = (clipped_vertex.y * self.viewport_height)
             / (self.projection_plane_distance * clipped_vertex.z)
-            + self.viewport_width / 2.0;
+            + self.viewport_height / 2.0;
 
         // println!("Projected x: {}, y: {}", projected_x, projected_y);
 
@@ -72,7 +72,7 @@ impl Camera {
     }
 
     fn convert_vertex_to_quadrilateral(&self, vertex: Vertex) -> Vector4<f64> {
-        return vec4(vertex.x, vertex.y, vertex.z, 1.0);
+        return vec4(vertex.x, vertex.y, vertex.z, 1.);
     }
 
     pub fn rotate_x(&mut self, angle: f64) {
@@ -84,7 +84,7 @@ impl Camera {
     pub fn rotate_y(&mut self, angle: f64) {
         self.rotation_y += angle;
         println!("Rotation y: {}", self.rotation_y);
-        self.rotation_matrix_y = Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(angle));
+        self.rotation_matrix_y = Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(-angle));
     }
 }
 

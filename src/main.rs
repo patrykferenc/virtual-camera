@@ -31,8 +31,8 @@ pub fn main() -> Result<(), String> {
         scene.add_polygon(polygon);
     }
 
-    let global_state_vector = vec4(0.0, -0.0, 0., 50.);
-    let mut camera = projection::camera::Camera::new(600.0, 800.0, 2., global_state_vector);
+    let global_state_vector = vec4(0., 0., 0., 0.);
+    let mut camera = projection::camera::Camera::new(600.0, 800.0, 50., global_state_vector);
 
     // let projection_matrix = perspective(cgmath::Deg(45.0), 800.0 / 600.0, 0.1, 100.0);
 
@@ -103,7 +103,6 @@ pub fn main() -> Result<(), String> {
 
         // Draw the scene.
         canvas.set_draw_color(Color::RGB(0, 255, 255));
-        println!("Lessgo!!!");
         for polygon in scene.polygons() {
             let vertices = polygon.vertices();
             let v1 = vertices[0];
