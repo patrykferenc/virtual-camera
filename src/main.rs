@@ -1,5 +1,7 @@
+mod projection;
 mod scene;
 
+use cgmath::{perspective, vec4};
 use scene::polygon::Polygon;
 use scene::vertex::Vertex;
 use sdl2::event::Event;
@@ -24,6 +26,15 @@ pub fn main() -> Result<(), String> {
         Polygon::new(v5, v4, v3),
         Polygon::new(v5, v3, v2),
     ];
+
+    for polygon in polygons {
+        scene.add_polygon(polygon);
+    }
+
+    let global_state_vector = vec4(0.0, -0.0, 0., 50.);
+    let mut camera = projection::camera::Camera::new(600.0, 800.0, 2., global_state_vector);
+
+    // let projection_matrix = perspective(cgmath::Deg(45.0), 800.0 / 600.0, 0.1, 100.0);
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -52,6 +63,22 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'running,
+                Event::KeyDown {
+                    keycode: Some(Keycode::W),
+                    ..
+                } => camera.rotate_x(5.0),
+                Event::KeyDown {
+                    keycode: Some(Keycode::S),
+                    ..
+                } => camera.rotate_x(-5.0),
+                Event::KeyDown {
+                    keycode: Some(Keycode::D),
+                    ..
+                } => camera.rotate_y(5.0),
+                Event::KeyDown {
+                    keycode: Some(Keycode::A),
+                    ..
+                } => camera.rotate_y(-5.0),
                 _ => {}
             }
         }
@@ -73,7 +100,21 @@ pub fn main() -> Result<(), String> {
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
-        // canvas.set_draw_color(Color::RGB(0, 255, 255));
+
+        // Draw the scene.
+        canvas.set_draw_color(Color::RGB(0, 255, 255));
+        println!("Lessgo!!!");
+        for polygon in scene.polygons() {
+            let vertices = polygon.vertices();
+            let v1 = vertices[0];
+            let v2 = vertices[1];
+            let v3 = vertices[2];
+
+            canvas.draw_line(camera.project(v1), camera.project(v2))?;
+            canvas.draw_line(camera.project(v2), camera.project(v3))?;
+            canvas.draw_line(camera.project(v3), camera.project(v1))?;
+        }
+
         // canvas.draw_point((100, 100)).map_err(|e| e.to_string())?;
         canvas.present();
     }

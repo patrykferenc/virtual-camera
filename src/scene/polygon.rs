@@ -11,4 +11,8 @@ impl Polygon {
             vertices: vec![v1, v2, v3],
         }
     }
+    
+    pub fn vertices(&self) -> Vec<Vertex> {
+        self.vertices.clone()
+    }
 }

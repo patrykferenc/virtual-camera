@@ -1,12 +1,12 @@
 #[derive(Debug, Clone, Copy)]
 pub struct Vertex {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl Vertex {
-    pub fn new(x: f32, y: f32, z: f32) -> Vertex {
+    pub fn new(x: f64, y: f64, z: f64) -> Vertex {
         Vertex { x, y, z }
     }
 }
