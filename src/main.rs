@@ -32,7 +32,7 @@ pub fn main() -> Result<(), String> {
     }
 
     let global_state_vector = vec4(0., 0., 0., 0.);
-    let mut camera = projection::camera::Camera::new(600.0, 800.0, 50., global_state_vector);
+    let mut camera = projection::camera::Camera::new(600.0, 800.0, 1., global_state_vector);
 
     // let projection_matrix = perspective(cgmath::Deg(45.0), 800.0 / 600.0, 0.1, 100.0);
 
@@ -79,6 +79,23 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::A),
                     ..
                 } => camera.rotate_y(-5.0),
+
+                Event::KeyDown {
+                    keycode: Some(Keycode::Left),
+                    ..
+                } => camera.translate_left(),
+                Event::KeyDown {
+                    keycode: Some(Keycode::Right),
+                    ..
+                } => camera.translate_right(),
+                Event::KeyDown {
+                    keycode: Some(Keycode::Up),
+                    ..
+                } => camera.translate_forward(),
+                Event::KeyDown {
+                    keycode: Some(Keycode::Down),
+                    ..
+                } => camera.translate_backward(),
                 _ => {}
             }
         }
@@ -109,9 +126,20 @@ pub fn main() -> Result<(), String> {
             let v2 = vertices[1];
             let v3 = vertices[2];
 
-            canvas.draw_line(camera.project(v1), camera.project(v2))?;
-            canvas.draw_line(camera.project(v2), camera.project(v3))?;
-            canvas.draw_line(camera.project(v3), camera.project(v1))?;
+            let projected_v1 = camera.project(v1);
+            let projected_v2 = camera.project(v2);
+            let projected_v3 = camera.project(v3);
+
+            // TODO Make it civilised xd
+            if projected_v2.is_ok() && projected_v3.is_ok() {
+                canvas.draw_line(camera.project(v2)?, camera.project(v3)?)?;
+            }
+            if projected_v2.is_ok() && projected_v3.is_ok() {
+                canvas.draw_line(camera.project(v2)?, camera.project(v3)?)?;
+            }
+            if projected_v3.is_ok() && projected_v1.is_ok() {
+                canvas.draw_line(camera.project(v3)?, camera.project(v1)?)?;
+            }
         }
 
         // canvas.draw_point((100, 100)).map_err(|e| e.to_string())?;

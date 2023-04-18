@@ -13,6 +13,7 @@ pub struct Camera {
     rotation_matrix_y: Matrix4<f64>,
     projection_plane_distance: f64,
     projection_matrix: Matrix4<f64>,
+    rotation_transform_matrix: Matrix4<f64>,
 }
 
 impl Camera {
@@ -46,10 +47,14 @@ impl Camera {
             ),
             rotation_x: startig_rotation_x,
             rotation_y: startig_rotation_y,
+            rotation_transform_matrix: Matrix4::from_axis_angle(
+                vec3(0.0, 1.0, 0.0),
+                cgmath::Deg(startig_rotation_y),
+            ),
         }
     }
 
-    pub fn project(&self, vertex: Vertex) -> Point {
+    pub fn project(&self, vertex: Vertex) -> Result<Point, String> {
         let rotated_global_state_vector = self.rotation_matrix_y.mul(self.global_state_vector);
         let vertex_in_quadrilateral = self.convert_vertex_to_quadrilateral(vertex);
         let point_rotated_around_y = self.rotation_matrix_y.mul(vertex_in_quadrilateral);
@@ -59,6 +64,12 @@ impl Camera {
         );
 
         let clipped_vertex = clip_quadrilateral(projected_point);
+
+        // TODO... make it better xd
+        if Camera::is_not_visible(clipped_vertex) {
+            return Err("Vertex is not visible".to_string());
+        }
+
         let projected_x = (clipped_vertex.x * self.viewport_width)
             / (self.projection_plane_distance * clipped_vertex.z)
             + self.viewport_width / 2.0;
@@ -68,11 +79,15 @@ impl Camera {
 
         // println!("Projected x: {}, y: {}", projected_x, projected_y);
 
-        Point::new(projected_x as i32, projected_y as i32)
+        Ok(Point::new(projected_x as i32, projected_y as i32))
     }
 
     fn convert_vertex_to_quadrilateral(&self, vertex: Vertex) -> Vector4<f64> {
         return vec4(vertex.x, vertex.y, vertex.z, 1.);
+    }
+
+    fn is_not_visible(vertex: Vector3<f64>) -> bool {
+        return vertex.z < 0.0;
     }
 
     pub fn rotate_x(&mut self, angle: f64) {
@@ -85,6 +100,22 @@ impl Camera {
         self.rotation_y += angle;
         println!("Rotation y: {}", self.rotation_y);
         self.rotation_matrix_y = Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(-angle));
+    }
+
+    pub fn translate_forward(&mut self) {
+        self.global_state_vector -= self.rotation_transform_matrix.mul(vec4(0.0, 0.0, 1., 0.0));
+    }
+
+    pub fn translate_backward(&mut self) {
+        self.global_state_vector += self.rotation_transform_matrix.mul(vec4(0.0, 0.0, 1., 0.0));
+    }
+
+    pub fn translate_left(&mut self) {
+        self.global_state_vector -= self.rotation_transform_matrix.mul(vec4(1.0, 0.0, 0., 0.0));
+    }
+
+    pub fn translate_right(&mut self) {
+        self.global_state_vector += self.rotation_transform_matrix.mul(vec4(1.0, 0.0, 0., 0.0));
     }
 }
 
