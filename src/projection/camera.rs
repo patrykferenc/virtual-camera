@@ -101,10 +101,14 @@ impl Camera {
     }
 
     pub fn translate_forward(&mut self) {
+        self.rotation_transform_matrix =
+            Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(self.rotation_y));
         self.global_state_vector -= self.rotation_transform_matrix.mul(vec4(0.0, 0.0, 1., 0.0));
     }
 
     pub fn translate_backward(&mut self) {
+        self.rotation_transform_matrix =
+            Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(self.rotation_y));
         self.global_state_vector += self.rotation_transform_matrix.mul(vec4(0.0, 0.0, 1., 0.0));
     }
 

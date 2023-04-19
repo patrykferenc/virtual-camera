@@ -2,33 +2,16 @@ pub mod projection;
 pub mod scene;
 
 use crate::scene::reader::read_polygons_from_obj;
-use cgmath::{perspective, vec4};
-use scene::polygon::Polygon;
-use scene::vertex::Vertex;
+use cgmath::vec4;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
+use std::time::Duration;
 
 pub fn main() -> Result<(), String> {
     let mut scene = scene::scene::Scene::new();
 
-    let polygons = read_polygons_from_obj("./airboat.obj").unwrap();
-
-    // TODO: read scene from file
-    // let v1 = Vertex::new(0.0, 10.0, 0.0);
-    // let v2 = Vertex::new(-10.0, 0.0, -10.0);
-    // let v3 = Vertex::new(10.0, 0.0, -10.0);
-    // let v4 = Vertex::new(10.0, 0.0, 10.0);
-    // let v5 = Vertex::new(-10.0, 0.0, 10.0);
-    //
-    // let polygons = vec![
-    //     Polygon::new(v1, v2, v3),
-    //     Polygon::new(v1, v3, v4),
-    //     Polygon::new(v1, v4, v5),
-    //     Polygon::new(v1, v5, v2),
-    //     Polygon::new(v5, v4, v3),
-    //     Polygon::new(v5, v3, v2),
-    // ];
+    let polygons = read_polygons_from_obj("./teapot.obj").unwrap();
 
     for polygon in polygons {
         scene.add_polygon(polygon);
@@ -155,6 +138,7 @@ pub fn main() -> Result<(), String> {
             }
         }
         canvas.present();
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 
     Ok(())
