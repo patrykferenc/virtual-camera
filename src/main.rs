@@ -31,7 +31,7 @@ pub fn main() -> Result<(), String> {
         scene.add_polygon(polygon);
     }
 
-    let global_state_vector = vec4(0., 0., 0., 0.);
+    let global_state_vector = vec4(0., 0., 10., 0.);
     let mut camera = projection::camera::Camera::new(600.0, 800.0, 1., global_state_vector);
 
     // let projection_matrix = perspective(cgmath::Deg(45.0), 800.0 / 600.0, 0.1, 100.0);
@@ -74,11 +74,11 @@ pub fn main() -> Result<(), String> {
                 Event::KeyDown {
                     keycode: Some(Keycode::D),
                     ..
-                } => camera.rotate_y(5.0),
+                } => camera.rotate_y(-5.0),
                 Event::KeyDown {
                     keycode: Some(Keycode::A),
                     ..
-                } => camera.rotate_y(-5.0),
+                } => camera.rotate_y(5.0),
 
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),

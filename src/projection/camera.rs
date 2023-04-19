@@ -31,7 +31,7 @@ impl Camera {
             viewport_width,
             projection_plane_distance,
             projection_matrix: perspective(
-                cgmath::Deg(45.0),
+                cgmath::Deg(80.0),
                 viewport_width / viewport_height,
                 0.1,
                 100.0,
@@ -93,13 +93,15 @@ impl Camera {
     pub fn rotate_x(&mut self, angle: f64) {
         self.rotation_x += angle;
         println!("Rotation x: {}", self.rotation_x);
-        self.rotation_matrix_x = Matrix4::from_axis_angle(vec3(1.0, 0.0, 0.0), cgmath::Deg(angle));
+        self.rotation_matrix_x =
+            Matrix4::from_axis_angle(vec3(1.0, 0.0, 0.0), cgmath::Deg(self.rotation_x));
     }
 
     pub fn rotate_y(&mut self, angle: f64) {
         self.rotation_y += angle;
         println!("Rotation y: {}", self.rotation_y);
-        self.rotation_matrix_y = Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(-angle));
+        self.rotation_matrix_y =
+            Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(-self.rotation_y));
     }
 
     pub fn translate_forward(&mut self) {
