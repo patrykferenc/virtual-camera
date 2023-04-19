@@ -31,7 +31,7 @@ pub fn main() -> Result<(), String> {
         scene.add_polygon(polygon);
     }
 
-    let global_state_vector = vec4(0., 0., 10., 0.);
+    let global_state_vector = vec4(0., 0., -10., 0.);
     let mut camera = projection::camera::Camera::new(600.0, 800.0, 1., global_state_vector);
 
     let sdl_context = sdl2::init()?;
@@ -144,8 +144,8 @@ pub fn main() -> Result<(), String> {
             if projected_v2.is_ok() && projected_v3.is_ok() {
                 canvas.draw_line(camera.project(v2)?, camera.project(v3)?)?;
             }
-            if projected_v2.is_ok() && projected_v3.is_ok() {
-                canvas.draw_line(camera.project(v2)?, camera.project(v3)?)?;
+            if projected_v2.is_ok() && projected_v1.is_ok() {
+                canvas.draw_line(camera.project(v2)?, camera.project(v1)?)?;
             }
             if projected_v3.is_ok() && projected_v1.is_ok() {
                 canvas.draw_line(camera.project(v3)?, camera.project(v1)?)?;

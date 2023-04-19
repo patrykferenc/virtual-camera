@@ -118,6 +118,7 @@ impl Camera {
 
     pub fn change_zoom(&mut self, zoom_change: f64) {
         self.projection_plane_distance += zoom_change;
+        println!("The zoom is {}", self.projection_plane_distance);
     }
 
     pub fn reset_zoom(&mut self) {
