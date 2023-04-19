@@ -1,6 +1,7 @@
-mod projection;
-mod scene;
+pub mod projection;
+pub mod scene;
 
+use crate::scene::reader::read_polygons_from_obj;
 use cgmath::{perspective, vec4};
 use scene::polygon::Polygon;
 use scene::vertex::Vertex;
@@ -11,27 +12,29 @@ use sdl2::pixels::Color;
 pub fn main() -> Result<(), String> {
     let mut scene = scene::scene::Scene::new();
 
-    // TODO: read scene from file
-    let v1 = Vertex::new(0.0, 10.0, 0.0);
-    let v2 = Vertex::new(-10.0, 0.0, -10.0);
-    let v3 = Vertex::new(10.0, 0.0, -10.0);
-    let v4 = Vertex::new(10.0, 0.0, 10.0);
-    let v5 = Vertex::new(-10.0, 0.0, 10.0);
+    let polygons = read_polygons_from_obj("./airboat.obj").unwrap();
 
-    let polygons = vec![
-        Polygon::new(v1, v2, v3),
-        Polygon::new(v1, v3, v4),
-        Polygon::new(v1, v4, v5),
-        Polygon::new(v1, v5, v2),
-        Polygon::new(v5, v4, v3),
-        Polygon::new(v5, v3, v2),
-    ];
+    // TODO: read scene from file
+    // let v1 = Vertex::new(0.0, 10.0, 0.0);
+    // let v2 = Vertex::new(-10.0, 0.0, -10.0);
+    // let v3 = Vertex::new(10.0, 0.0, -10.0);
+    // let v4 = Vertex::new(10.0, 0.0, 10.0);
+    // let v5 = Vertex::new(-10.0, 0.0, 10.0);
+    //
+    // let polygons = vec![
+    //     Polygon::new(v1, v2, v3),
+    //     Polygon::new(v1, v3, v4),
+    //     Polygon::new(v1, v4, v5),
+    //     Polygon::new(v1, v5, v2),
+    //     Polygon::new(v5, v4, v3),
+    //     Polygon::new(v5, v3, v2),
+    // ];
 
     for polygon in polygons {
         scene.add_polygon(polygon);
     }
 
-    let global_state_vector = vec4(0., 0., -10., 0.);
+    let global_state_vector = vec4(0., 0., 0., 0.);
     let mut camera = projection::camera::Camera::new(600.0, 800.0, 1., global_state_vector);
 
     let sdl_context = sdl2::init()?;
