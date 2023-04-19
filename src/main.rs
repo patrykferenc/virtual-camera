@@ -12,11 +12,11 @@ pub fn main() -> Result<(), String> {
     let mut scene = scene::scene::Scene::new();
 
     // TODO: read scene from file
-    let v1 = Vertex::new(0.0, 1.0, 0.0);
-    let v2 = Vertex::new(-1.0, 0.0, -1.0);
-    let v3 = Vertex::new(1.0, 0.0, -1.0);
-    let v4 = Vertex::new(1.0, 0.0, 1.0);
-    let v5 = Vertex::new(-1.0, 0.0, 1.0);
+    let v1 = Vertex::new(0.0, 10.0, 0.0);
+    let v2 = Vertex::new(-10.0, 0.0, -10.0);
+    let v3 = Vertex::new(10.0, 0.0, -10.0);
+    let v4 = Vertex::new(10.0, 0.0, 10.0);
+    let v5 = Vertex::new(-10.0, 0.0, 10.0);
 
     let polygons = vec![
         Polygon::new(v1, v2, v3),
@@ -33,8 +33,6 @@ pub fn main() -> Result<(), String> {
 
     let global_state_vector = vec4(0., 0., 10., 0.);
     let mut camera = projection::camera::Camera::new(600.0, 800.0, 1., global_state_vector);
-
-    // let projection_matrix = perspective(cgmath::Deg(45.0), 800.0 / 600.0, 0.1, 100.0);
 
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -96,6 +94,18 @@ pub fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Down),
                     ..
                 } => camera.translate_backward(),
+                Event::KeyDown {
+                    keycode: Some(Keycode::Z),
+                    ..
+                } => camera.change_zoom(-0.1),
+                Event::KeyDown {
+                    keycode: Some(Keycode::X),
+                    ..
+                } => camera.change_zoom(0.1),
+                Event::KeyDown {
+                    keycode: Some(Keycode::C),
+                    ..
+                } => camera.reset_zoom(),
                 _ => {}
             }
         }
@@ -141,8 +151,6 @@ pub fn main() -> Result<(), String> {
                 canvas.draw_line(camera.project(v3)?, camera.project(v1)?)?;
             }
         }
-
-        // canvas.draw_point((100, 100)).map_err(|e| e.to_string())?;
         canvas.present();
     }
 

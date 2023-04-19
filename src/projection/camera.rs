@@ -72,12 +72,10 @@ impl Camera {
 
         let projected_x = (clipped_vertex.x * self.viewport_width)
             / (self.projection_plane_distance * clipped_vertex.z)
-            + self.viewport_width / 2.0;
+            + self.viewport_width / 2.;
         let projected_y = (clipped_vertex.y * self.viewport_height)
             / (self.projection_plane_distance * clipped_vertex.z)
-            + self.viewport_height / 2.0;
-
-        // println!("Projected x: {}, y: {}", projected_x, projected_y);
+            + self.viewport_height / 2.;
 
         Ok(Point::new(projected_x as i32, projected_y as i32))
     }
@@ -87,19 +85,17 @@ impl Camera {
     }
 
     fn is_not_visible(vertex: Vector3<f64>) -> bool {
-        return vertex.z < 0.0;
+        return vertex.z < 1.;
     }
 
     pub fn rotate_x(&mut self, angle: f64) {
         self.rotation_x += angle;
-        println!("Rotation x: {}", self.rotation_x);
         self.rotation_matrix_x =
             Matrix4::from_axis_angle(vec3(1.0, 0.0, 0.0), cgmath::Deg(self.rotation_x));
     }
 
     pub fn rotate_y(&mut self, angle: f64) {
         self.rotation_y += angle;
-        println!("Rotation y: {}", self.rotation_y);
         self.rotation_matrix_y =
             Matrix4::from_axis_angle(vec3(0.0, 1.0, 0.0), cgmath::Deg(-self.rotation_y));
     }
@@ -118,6 +114,14 @@ impl Camera {
 
     pub fn translate_right(&mut self) {
         self.global_state_vector += self.rotation_transform_matrix.mul(vec4(1.0, 0.0, 0., 0.0));
+    }
+
+    pub fn change_zoom(&mut self, zoom_change: f64) {
+        self.projection_plane_distance += zoom_change;
+    }
+
+    pub fn reset_zoom(&mut self) {
+        self.projection_plane_distance = 1.
     }
 }
 
