@@ -11,7 +11,12 @@ use std::time::Duration;
 pub fn main() -> Result<(), String> {
     let mut scene = scene::scene::Scene::new();
 
-    let polygons = read_polygons_from_obj("./teapot.obj").unwrap();
+    // read file from the command line if possible
+    let file_to_read = std::env::args()
+        .nth(1)
+        .unwrap_or("./teapot.obj".to_string());
+
+    let polygons = read_polygons_from_obj(&*file_to_read).unwrap();
 
     for polygon in polygons {
         scene.add_polygon(polygon);
